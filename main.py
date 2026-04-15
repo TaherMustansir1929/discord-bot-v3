@@ -1,0 +1,81 @@
+import os
+
+import discord
+from discord import Interaction, app_commands
+from discord.ext import commands
+from discord.message import Message
+from dotenv import load_dotenv
+
+from src.handlers.roast_handler import roast_handler, roast_handler_appCommand
+from src.handlers.waifu_handler import waifu_handler
+
+load_dotenv()
+
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+
+bot = commands.Bot(command_prefix="!", intents=intents)
+
+
+@bot.event
+async def on_ready():
+    if not bot.user:
+        raise ValueError("Bot user not found.")
+
+    print(f"#- Logged on as {bot.user}!")
+    await bot.tree.sync()
+    print("i- Slash commands synced.")
+    print("#- Connected Guilds:")
+    for i, guild in enumerate(bot.guilds):
+        print(f"[{i + 1}] {guild.name} (ID: {guild.id})")
+
+
+@bot.event
+async def on_message(message: Message):
+    if message.author == bot.user:
+        return
+
+    print(f"Message from {message.author}: {message.content}")
+    if "hello" in message.content.lower():
+        await message.channel.send("Hello! How can I assist you today?")
+
+    await roast_handler(message=message, bot=bot)
+    await bot.process_commands(message)
+
+
+@bot.tree.command(name="ping", description="Check the bot's latency.")
+async def ping(interaction: Interaction):
+    latency = round(bot.latency * 1000)  # latency in milliseconds
+    await interaction.response.send_message(f"Pong! 🏓 ({latency}ms)")
+
+
+@bot.tree.command(name="zeo", description="Get roasted by Zeo.")
+async def zeo(interaction: Interaction, message: str):
+    await roast_handler_appCommand(interaction=interaction, message=message)
+
+
+@bot.tree.command(name="waifu", description="Get anime waifu images")
+@app_commands.choices(
+    type=[
+        app_commands.Choice(name="SFW", value="sfw"),
+        app_commands.Choice(name="NSFW", value="nsfw"),
+    ]
+)
+@app_commands.describe(
+    type="sfw or nsfw",
+    category="keep it blank for default category",
+)
+async def waifu(
+        interaction: Interaction,
+        type: str = "sfw",
+        category: str = "waifu",
+):
+    await waifu_handler(interaction=interaction, type=type, category=category)
+
+
+if __name__ == "__main__":
+    token = os.getenv("DISCORD_TOKEN")
+    if not token:
+        raise ValueError("DISCORD_TOKEN environment variable not set.")
+    bot.run(token)
