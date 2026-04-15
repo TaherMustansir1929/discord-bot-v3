@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 from src.handlers.roast_handler import roast_handler, roast_handler_appCommand
 from src.handlers.waifu_handler import waifu_handler
+from src.handlers.giphy_handler import giphy_handler
 
 load_dotenv()
 
@@ -55,7 +56,7 @@ async def ping(interaction: Interaction):
 
 # ===================
 # === ZEO COMMAND ===
-# ====================
+# ===================
 @bot.tree.command(name="zeo", description="Get roasted by Zeo.")
 async def zeo(interaction: Interaction, message: str):
     await roast_handler_appCommand(interaction=interaction, message=message)
@@ -81,6 +82,22 @@ async def waifu(
         category: str = "waifu",
 ):
     await waifu_handler(interaction=interaction, type=type, category=category)
+
+
+# =====================
+# === GIPHY COMMAND ===
+# =====================
+@bot.tree.command(name="giphy", description="Get a random giphy")
+@app_commands.choices(
+    rating=[
+        app_commands.Choice(name="G", value="g"),
+        app_commands.Choice(name="PG", value="pg"),
+        app_commands.Choice(name="PG-13", value="pg-13"),
+        app_commands.Choice(name="R", value="r"),
+    ]
+)
+async def giphy(interaction: Interaction, search: str, rating: str = "g"):
+    await giphy_handler(interaction=interaction, search=search, rating=rating)
 
 
 if __name__ == "__main__":
