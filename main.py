@@ -44,17 +44,26 @@ async def on_message(message: Message):
     await bot.process_commands(message)
 
 
+# ====================
+# === PING COMMAND ===
+# ====================
 @bot.tree.command(name="ping", description="Check the bot's latency.")
 async def ping(interaction: Interaction):
     latency = round(bot.latency * 1000)  # latency in milliseconds
     await interaction.response.send_message(f"Pong! 🏓 ({latency}ms)")
 
 
+# ===================
+# === ZEO COMMAND ===
+# ====================
 @bot.tree.command(name="zeo", description="Get roasted by Zeo.")
 async def zeo(interaction: Interaction, message: str):
     await roast_handler_appCommand(interaction=interaction, message=message)
 
 
+# =====================
+# === WAIFU COMMAND ===
+# =====================
 @bot.tree.command(name="waifu", description="Get anime waifu images")
 @app_commands.choices(
     type=[
