@@ -51,7 +51,7 @@ async def waifu_handler(interaction: Interaction, type: str, category: str):
         # filepath = await fetch_and_save_image(url, category)
         # file = await create_discord_file(filepath)
         # await interaction.followup.send(file=file)
-        image = await fetch_image(url, category)
+        image = await fetch_image(url)
         await interaction.followup.send(image)
     except Exception as e:
         await interaction.followup.send(str(e))
