@@ -4,6 +4,17 @@ import os
 from discord import File
 
 
+async def fetch_image(api_endpoint: str) -> str:
+    response = requests.get(api_endpoint)
+    response.raise_for_status()
+    image_url = response.json().get("url")
+
+    if image_url is None:
+        image_url = "https://imgs.search.brave.com/0QkFfmRcEzh3e994MKeo3VGW5DXQM7fmLT0mBa--qoU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wMzUv/ODg2LzMzNi9zbWFs/bC9lcnJvci00MDQt/cGFnZS1ub3QtZm91/bmQtd2l0aC1yb2Nr/ZXQtdmVjdG9yLmpw/Zw"
+
+    return image_url
+
+
 async def fetch_and_save_image(api_endpoint: str, folder: str) -> str:
     api_response = requests.get(api_endpoint)
     api_response.raise_for_status()

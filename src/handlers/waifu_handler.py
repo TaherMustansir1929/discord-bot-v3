@@ -1,5 +1,5 @@
 from discord import Interaction
-from src.handlers.utils import create_discord_file, fetch_and_save_image
+from src.handlers.utils import create_discord_file, fetch_and_save_image, fetch_image
 
 CATEGORIES = {
     "sfw": [
@@ -48,9 +48,11 @@ async def waifu_handler(interaction: Interaction, type: str, category: str):
         return
 
     try:
-        filepath = await fetch_and_save_image(url, category)
-        file = await create_discord_file(filepath)
-        await interaction.followup.send(file=file)
+        # filepath = await fetch_and_save_image(url, category)
+        # file = await create_discord_file(filepath)
+        # await interaction.followup.send(file=file)
+        image = await fetch_image(url, category)
+        await interaction.followup.send(image)
     except Exception as e:
         await interaction.followup.send(str(e))
         return
