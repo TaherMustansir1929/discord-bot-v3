@@ -6,10 +6,10 @@ set -euo pipefail
 
 # ── Configuration (edit these) ───────────────────────────────────────────────
 REPO_URL="https://github.com/TaherMustansir1929/discord-bot-v3.git"  # or SSH URL
-REPO_DIR="./"          # where the repo lives (or will be cloned)
+REPO_DIR="./discord-bot"          # where the repo lives (or will be cloned)
 IMAGE_NAME="discord-bot-v3"          # Docker image name
 CONTAINER_NAME="discord-bot"         # Docker container name
-ENV_FILE="../.env"     # path to your .env file (outside repo)
+ENV_FILE=".env"     # path to your .env file (outside repo)
 BRANCH="main"                        # branch to pull from
 # ─────────────────────────────────────────────────────────────────────────────
 
