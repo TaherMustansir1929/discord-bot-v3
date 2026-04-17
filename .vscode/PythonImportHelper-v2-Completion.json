@@ -132,11 +132,37 @@
         "documentation": {}
     },
     {
+        "label": "random",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "random",
+        "description": "random",
+        "detail": "random",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
         "label": "discord",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "discord",
         "description": "discord",
+        "detail": "discord",
+        "documentation": {}
+    },
+    {
+        "label": "Interaction",
+        "importPath": "discord",
+        "description": "discord",
+        "isExtraImport": true,
         "detail": "discord",
         "documentation": {}
     },
@@ -213,15 +239,6 @@
         "documentation": {}
     },
     {
-        "label": "requests",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "requests",
-        "description": "requests",
-        "detail": "requests",
-        "documentation": {}
-    },
-    {
         "label": "create_discord_file",
         "importPath": "src.handlers.utils",
         "description": "src.handlers.utils",
@@ -235,14 +252,6 @@
         "description": "src.handlers.utils",
         "isExtraImport": true,
         "detail": "src.handlers.utils",
-        "documentation": {}
-    },
-    {
-        "label": "Literal",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
         "documentation": {}
     },
     {
@@ -275,6 +284,14 @@
         "description": "src.handlers.waifu_handler",
         "isExtraImport": true,
         "detail": "src.handlers.waifu_handler",
+        "documentation": {}
+    },
+    {
+        "label": "giphy_handler",
+        "importPath": "src.handlers.giphy_handler",
+        "description": "src.handlers.giphy_handler",
+        "isExtraImport": true,
+        "detail": "src.handlers.giphy_handler",
         "documentation": {}
     },
     {
@@ -374,6 +391,15 @@
         "description": "src.agent.utils",
         "peekOfCode": "def get_google_model(\n    model=\"gemini-3-flash-preview\", temperature=0.7\n) -> ChatGoogleGenerativeAI:\n    global _model_google\n    if _model_google is not None:\n        return _model_google\n    api_key = os.getenv(\"GOOGLE_API_KEY\")\n    if not api_key:\n        raise RuntimeError(\n            \"GOOGLE_API_KEY is not set. Add it to your environment or .env file.\"",
         "detail": "src.agent.utils",
+        "documentation": {}
+    },
+    {
+        "label": "validate_category",
+        "kind": 2,
+        "importPath": "src.handlers.waifu_handler",
+        "description": "src.handlers.waifu_handler",
+        "peekOfCode": "def validate_category(type: str, category: str):\n    if type not in CATEGORIES:\n        error_msg = f\"Invalid type ⚠️.\\nValid types are: `{', '.join(CATEGORIES.keys())}`\"\n        raise ValueError(error_msg)\n    if category not in CATEGORIES[type]:\n        error_msg = f\"Invalid type ⚠️.\\nValid types are: `{', '.join(CATEGORIES[type])}`\"\n        raise ValueError(error_msg)\nasync def waifu_handler(interaction: Interaction, type: str, category: str):\n    url = f\"https://api.waifu.pics/{type}/{category}\"\n    await interaction.response.defer()",
+        "detail": "src.handlers.waifu_handler",
         "documentation": {}
     },
     {
