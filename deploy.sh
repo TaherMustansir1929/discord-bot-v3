@@ -5,7 +5,7 @@
 set -euo pipefail
 
 # ── Configuration (edit these) ───────────────────────────────────────────────
-REPO_URL="https://github.com/your-username/your-repo.git"  # or SSH URL
+REPO_URL="https://github.com/TaherMustansir1929/discord-bot-v3.git"  # or SSH URL
 REPO_DIR="./"          # where the repo lives (or will be cloned)
 IMAGE_NAME="discord-bot-v3"          # Docker image name
 CONTAINER_NAME="discord-bot"         # Docker container name
