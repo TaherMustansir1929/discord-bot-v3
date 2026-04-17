@@ -1,4 +1,5 @@
 import os
+from typing import Literal
 
 import discord
 from discord import Interaction, app_commands
@@ -70,18 +71,25 @@ async def zeo(interaction: Interaction, message: str):
     type=[
         app_commands.Choice(name="SFW", value="sfw"),
         app_commands.Choice(name="NSFW", value="nsfw"),
+    ],
+    help=[
+        app_commands.Choice(name="YES", value="YES"),
+        app_commands.Choice(name="NO", value="NO"),
     ]
+
 )
 @app_commands.describe(
     type="sfw or nsfw",
     category="keep it blank for default category",
+    help="get the list of categories"
 )
 async def waifu(
         interaction: Interaction,
         type: str = "sfw",
         category: str = "waifu",
+        help: Literal["YES", "NO"] = "NO"
 ):
-    await waifu_handler(interaction=interaction, type=type, category=category)
+    await waifu_handler(interaction=interaction, type=type, category=category, help=help)
 
 
 # =====================

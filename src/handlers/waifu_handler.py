@@ -1,3 +1,5 @@
+from typing import Literal
+
 from discord import Interaction
 from src.handlers.utils import create_discord_file, fetch_and_save_image, fetch_image
 
@@ -37,9 +39,18 @@ def validate_category(type: str, category: str):
         raise ValueError(error_msg)
 
 
-async def waifu_handler(interaction: Interaction, type: str, category: str):
+def get_categories() -> str:
+    msg = f"[SFW Categories] = `{', '.join(CATEGORIES["sfw"])}`\n[NSFW Categories] = `{', '.join(CATEGORIES["nsfw"])}`"
+    return msg
+
+
+async def waifu_handler(interaction: Interaction, type: str, category: str, help: Literal["YES", "NO"]):
     url = f"https://api.waifu.pics/{type}/{category}"
     await interaction.response.defer()
+
+    if help == "YES":
+        await interaction.followup.send(get_categories())
+        return
 
     try:
         validate_category(type, category)
