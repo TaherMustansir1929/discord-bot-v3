@@ -30,7 +30,16 @@ step "Preflight checks"
 command -v git    &>/dev/null || die "git is not installed."
 command -v docker &>/dev/null || die "docker is not installed."
 
-docker info &>/dev/null || die "Docker daemon is not running (or permission denied — try sudo)."
+# Try without sudo first (user in docker group), fall back to sudo if needed
+if docker info &>/dev/null; then
+    DOCKER="docker"
+elif sudo docker info &>/dev/null; then
+    DOCKER="sudo docker"
+else
+    die "Docker daemon is not running (or permission denied). Try: sudo usermod -aG docker \$USER"
+fi
+
+log "Using Docker command: '${DOCKER}'"
 
 [[ -f "$ENV_FILE" ]] || die ".env file not found at '$ENV_FILE'. Refusing to deploy without it."
 
@@ -66,7 +75,7 @@ success "Source code is up to date."
 # ── Build Docker image ────────────────────────────────────────────────────────
 step "Building Docker image '$IMAGE_NAME'"
 
-docker build \
+$DOCKER build \
     --tag  "${IMAGE_NAME}:latest" \
     --tag  "${IMAGE_NAME}:$(git -C "$REPO_DIR" rev-parse --short HEAD)" \
     --file "$REPO_DIR/Dockerfile" \
@@ -77,20 +86,20 @@ success "Image built: ${IMAGE_NAME}:latest"
 # ── Stop & remove old container (if any) ─────────────────────────────────────
 step "Replacing container '$CONTAINER_NAME'"
 
-if docker ps -q --filter "name=^${CONTAINER_NAME}$" | grep -q .; then
+if $DOCKER ps -q --filter "name=^${CONTAINER_NAME}$" | grep -q .; then
     log "Stopping running container..."
-    docker stop "$CONTAINER_NAME"
+    $DOCKER stop "$CONTAINER_NAME"
 fi
 
-if docker ps -aq --filter "name=^${CONTAINER_NAME}$" | grep -q .; then
+if $DOCKER ps -aq --filter "name=^${CONTAINER_NAME}$" | grep -q .; then
     log "Removing old container..."
-    docker rm "$CONTAINER_NAME"
+    $DOCKER rm "$CONTAINER_NAME"
 fi
 
 # ── Run new container ─────────────────────────────────────────────────────────
 step "Starting container"
 
-docker run \
+$DOCKER run \
     --detach \
     --name "$CONTAINER_NAME" \
     --env-file "$ENV_FILE" \
@@ -104,19 +113,19 @@ echo ""
 echo -e "${BOLD}── Deployment Summary ───────────────────────────────────────${RESET}"
 echo -e "  Commit  : $(git -C "$REPO_DIR" log -1 --format='%h — %s (%cr)')"
 echo -e "  Image   : ${IMAGE_NAME}:latest"
-echo -e "  Status  : $(docker inspect -f '{{.State.Status}}' "$CONTAINER_NAME")"
-echo -e "  Started : $(docker inspect -f '{{.State.StartedAt}}' "$CONTAINER_NAME")"
+echo -e "  Status  : $($DOCKER inspect -f '{{.State.Status}}' "$CONTAINER_NAME")"
+echo -e "  Started : $($DOCKER inspect -f '{{.State.StartedAt}}' "$CONTAINER_NAME")"
 echo -e "${BOLD}─────────────────────────────────────────────────────────────${RESET}"
 echo ""
-echo -e "  ${CYAN}Logs:${RESET}     docker logs -f ${CONTAINER_NAME}"
-echo -e "  ${CYAN}Stop:${RESET}     docker stop ${CONTAINER_NAME}"
-echo -e "  ${CYAN}Restart:${RESET}  docker restart ${CONTAINER_NAME}"
+echo -e "  ${CYAN}Logs:${RESET}     ${DOCKER} logs -f ${CONTAINER_NAME}"
+echo -e "  ${CYAN}Stop:${RESET}     ${DOCKER} stop ${CONTAINER_NAME}"
+echo -e "  ${CYAN}Restart:${RESET}  ${DOCKER} restart ${CONTAINER_NAME}"
 echo ""
 
 # ── Prune dangling images (optional cleanup) ──────────────────────────────────
-DANGLING=$(docker images -f "dangling=true" -q)
+DANGLING=$($DOCKER images -f "dangling=true" -q)
 if [[ -n "$DANGLING" ]]; then
     log "Pruning $(echo "$DANGLING" | wc -l) dangling image(s) from previous builds..."
-    docker image prune -f &>/dev/null
+    $DOCKER image prune -f &>/dev/null
     success "Pruned dangling images."
 fi
