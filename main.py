@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord.message import Message
 from dotenv import load_dotenv
 
+from src.handlers.imagine_handler import imagine_handler
 from src.handlers.roast_handler import roast_handler, roast_handler_appCommand
 from src.handlers.waifu_handler import waifu_handler
 from src.handlers.giphy_handler import giphy_handler
@@ -106,6 +107,14 @@ async def waifu(
 )
 async def giphy(interaction: Interaction, search: str, rating: str = "g"):
     await giphy_handler(interaction=interaction, search=search, rating=rating)
+
+
+# =======================
+# === IMAGINE COMMAND ===
+# =======================
+@bot.tree.command(name="imagine", description="Generate an image based on a prompt")
+async def imagine(interaction: Interaction, prompt: str):
+    await imagine_handler(interaction=interaction, prompt=prompt)
 
 
 if __name__ == "__main__":
