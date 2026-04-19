@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord.message import Message
 from dotenv import load_dotenv
 
+from src.handlers.speech_handler import speech_handler
 from src.handlers.imagine_handler import imagine_handler
 from src.handlers.roast_handler import roast_handler, roast_handler_appCommand
 from src.handlers.waifu_handler import waifu_handler
@@ -115,6 +116,24 @@ async def giphy(interaction: Interaction, search: str, rating: str = "g"):
 @bot.tree.command(name="imagine", description="Generate an image based on a prompt")
 async def imagine(interaction: Interaction, prompt: str):
     await imagine_handler(interaction=interaction, prompt=prompt)
+
+
+# =======================
+# === SPEECH COMMAND ===
+# =======================
+@bot.tree.command(name="speech", description="tts (text-to-speech)")
+@app_commands.choices(
+    voice=[
+        app_commands.Choice(name="Autumn", value="autumn"),
+        app_commands.Choice(name="Diana", value="diana"),
+        app_commands.Choice(name="Hannah", value="hannah"),
+        app_commands.Choice(name="Austin", value="austin"),
+        app_commands.Choice(name="Daniel", value="daniel"),
+        app_commands.Choice(name="Troy", value="troy"),
+    ]
+)
+async def speech(interaction: Interaction, prompt: str, voice: str):
+    await speech_handler(interaction=interaction, text=prompt, voice=voice)
 
 
 if __name__ == "__main__":
