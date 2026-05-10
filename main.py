@@ -24,6 +24,8 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+LATEST_UPDATE = "updated roast handler prompt + updated ping command"
+
 
 @bot.event
 async def on_ready():
@@ -55,9 +57,19 @@ async def on_message(message: Message):
 # === PING COMMAND ===
 # ====================
 @bot.tree.command(name="ping", description="Check the bot's latency.")
-async def ping(interaction: Interaction):
+@app_commands.choices(
+    verbose=[
+        app_commands.Choice(name="YES", value="YES"),
+    ]
+)
+async def ping(interaction: Interaction, verbose: str = "NO"):
     latency = round(bot.latency * 1000)  # latency in milliseconds
-    await interaction.response.send_message(f"Pong! 🏓 ({latency}ms)")
+    if verbose == "YES":
+        await interaction.response.send_message(
+            f"Pong! 🏓 ({latency}ms)\n**Latest Update:** {LATEST_UPDATE}"
+        )
+    else:
+        await interaction.response.send_message(f"Pong! 🏓 ({latency}ms)")
 
 
 # ===================
