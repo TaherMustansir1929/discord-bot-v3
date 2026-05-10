@@ -1,7 +1,7 @@
+import os
 import random
 
 import requests
-import os
 from discord import Interaction
 
 
@@ -16,8 +16,16 @@ async def giphy_handler(interaction: Interaction, search: str, rating: str):
 
     LIMIT: int = 10
     try:
-        response = requests.get(url, params={"api_key": api_key, "q": search, "limit": LIMIT, "rating": rating,
-                                             "remove_low_contrast": False})
+        response = requests.get(
+            url,
+            params={
+                "api_key": api_key,
+                "q": search,
+                "limit": LIMIT,
+                "rating": rating,
+                "remove_low_contrast": False,
+            },
+        )
         response.raise_for_status()
 
         gifs_len = len(response.json().get("data"))

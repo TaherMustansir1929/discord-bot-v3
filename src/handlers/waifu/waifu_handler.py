@@ -1,7 +1,8 @@
 from typing import Literal
 
 from discord import Interaction
-from src.handlers.utils import create_discord_file, fetch_and_save_image, fetch_image
+
+from src.utils import fetch_image
 
 CATEGORIES = {
     "sfw": [
@@ -32,7 +33,9 @@ CATEGORIES = {
 
 def validate_category(type: str, category: str):
     if type not in CATEGORIES:
-        error_msg = f"Invalid type ⚠️.\nValid types are: `{', '.join(CATEGORIES.keys())}`"
+        error_msg = (
+            f"Invalid type ⚠️.\nValid types are: `{', '.join(CATEGORIES.keys())}`"
+        )
         raise ValueError(error_msg)
     if category not in CATEGORIES[type]:
         error_msg = f"Invalid type ⚠️.\nValid types are: `{', '.join(CATEGORIES[type])}`"
@@ -40,11 +43,13 @@ def validate_category(type: str, category: str):
 
 
 def get_categories() -> str:
-    msg = f"[SFW Categories] = `{', '.join(CATEGORIES["sfw"])}`\n[NSFW Categories] = `{', '.join(CATEGORIES["nsfw"])}`"
+    msg = f"[SFW Categories] = `{', '.join(CATEGORIES['sfw'])}`\n[NSFW Categories] = `{', '.join(CATEGORIES['nsfw'])}`"
     return msg
 
 
-async def waifu_handler(interaction: Interaction, type: str, category: str, help: Literal["YES", "NO"]):
+async def waifu_handler(
+    interaction: Interaction, type: str, category: str, help: Literal["YES", "NO"]
+):
     url = f"https://api.waifu.pics/{type}/{category}"
     await interaction.response.defer()
 

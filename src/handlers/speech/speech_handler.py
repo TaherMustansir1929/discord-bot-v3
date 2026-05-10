@@ -2,8 +2,8 @@ import io
 import os
 
 import discord
-from groq import Groq
 from dotenv import load_dotenv
+from groq import Groq
 
 load_dotenv()
 
@@ -15,7 +15,10 @@ client = Groq(api_key=api_key)
 
 # ─── 1. Orchestrator ────────────────────────────────────────────────────────
 
-async def speech_handler(interaction: discord.Interaction, text: str, voice: str) -> None:
+
+async def speech_handler(
+    interaction: discord.Interaction, text: str, voice: str
+) -> None:
     await interaction.response.defer()
 
     try:
@@ -26,6 +29,7 @@ async def speech_handler(interaction: discord.Interaction, text: str, voice: str
 
 
 # ─── 2. Audio generation ────────────────────────────────────────────────────
+
 
 def generate_audio(text: str, voice: str) -> bytes:
     response = client.audio.speech.create(
@@ -40,10 +44,11 @@ def generate_audio(text: str, voice: str) -> bytes:
 
 # ─── 3. Send to Discord ─────────────────────────────────────────────────────
 
+
 async def send_audio_to_discord(
-        interaction: discord.Interaction,
-        audio_bytes: bytes,
-        text: str,
+    interaction: discord.Interaction,
+    audio_bytes: bytes,
+    text: str,
 ) -> None:
     buffer = io.BytesIO(audio_bytes)
     buffer.seek(0)  # rewind so discord.py reads from the beginning

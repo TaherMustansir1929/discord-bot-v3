@@ -7,11 +7,14 @@ from discord.ext import commands
 from discord.message import Message
 from dotenv import load_dotenv
 
-from src.handlers.speech_handler import speech_handler
-from src.handlers.imagine_handler import imagine_handler
-from src.handlers.roast_handler import roast_handler, roast_handler_appCommand
-from src.handlers.waifu_handler import waifu_handler
-from src.handlers.giphy_handler import giphy_handler
+from src.handlers import (
+    giphy_handler,
+    imagine_handler,
+    roast_handler,
+    roast_handler_appCommand,
+    speech_handler,
+    waifu_handler,
+)
 
 load_dotenv()
 
@@ -77,21 +80,22 @@ async def zeo(interaction: Interaction, message: str):
     help=[
         app_commands.Choice(name="YES", value="YES"),
         app_commands.Choice(name="NO", value="NO"),
-    ]
-
+    ],
 )
 @app_commands.describe(
     type="sfw or nsfw",
     category="keep it blank for default category",
-    help="get the list of categories"
+    help="get the list of categories",
 )
 async def waifu(
-        interaction: Interaction,
-        type: str = "sfw",
-        category: str = "waifu",
-        help: Literal["YES", "NO"] = "NO"
+    interaction: Interaction,
+    type: str = "sfw",
+    category: str = "waifu",
+    help: Literal["YES", "NO"] = "NO",
 ):
-    await waifu_handler(interaction=interaction, type=type, category=category, help=help)
+    await waifu_handler(
+        interaction=interaction, type=type, category=category, help=help
+    )
 
 
 # =====================

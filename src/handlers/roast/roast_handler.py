@@ -1,8 +1,8 @@
 from discord import Interaction
-from discord.message import Message
 from discord.ext.commands import Bot
+from discord.message import Message
 
-from src.agent.agents import roast_agent
+from .agent import roast_agent
 
 
 async def roast_handler(message: Message, bot: Bot):

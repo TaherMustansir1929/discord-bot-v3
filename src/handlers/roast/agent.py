@@ -1,10 +1,9 @@
 from dotenv import load_dotenv
-
 from langchain.agents import create_agent
-from langchain.messages import HumanMessage, AIMessage
+from langchain.messages import AIMessage, HumanMessage
 
 from src.prompts.roast import roast_prompt
-from src.agent.utils import get_groq_model, get_google_model
+from src.utils import get_google_model
 
 load_dotenv()
 
