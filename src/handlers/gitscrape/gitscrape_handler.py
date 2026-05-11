@@ -22,10 +22,7 @@ async def gitscrape_handler(interaction: Interaction, query: str):
         )
         return
 
-    if len(repositories) > 100:
-        repositories = repositories[:100]
-
-    if len(repositories) <= 5:
+    if len(repositories) <= 10:
         top_reranked_repositories = repositories
     else:
         # rerank top repositories using Cohere Reranker

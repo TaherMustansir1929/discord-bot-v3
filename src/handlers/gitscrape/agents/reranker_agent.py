@@ -8,7 +8,7 @@ co = cohere.ClientV2()
 
 
 async def reranker_agent(
-    query: str, repositories: list[Repository], top_n: int = 5
+    query: str, repositories: list[Repository], top_n: int = 10
 ) -> list[Repository]:
     # Convert Repository objects to dictionaries for Co:here
     docs = [
