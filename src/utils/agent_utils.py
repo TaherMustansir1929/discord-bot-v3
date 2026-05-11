@@ -4,11 +4,14 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from pydantic import SecretStr
 
+GEMINI_MODEL_NAME = "gemini-3-flash-preview"
+GROQ_MODEL_NAME = "llama-3.3-70b-versatile"
+
 _model_groq: ChatGroq | None = None
 _model_google: ChatGoogleGenerativeAI | None = None
 
 
-def get_groq_model(model="llama-3.3-70b-versatile", temperature=0.7) -> ChatGroq:
+def get_groq_model(model=GROQ_MODEL_NAME, temperature=0.7) -> ChatGroq:
     global _model_groq
     if _model_groq is not None:
         return _model_groq
@@ -28,7 +31,7 @@ def get_groq_model(model="llama-3.3-70b-versatile", temperature=0.7) -> ChatGroq
 
 
 def get_google_model(
-    model="gemini-3-flash-preview", temperature=0.7
+    model=GEMINI_MODEL_NAME, temperature=0.7
 ) -> ChatGoogleGenerativeAI:
     global _model_google
     if _model_google is not None:

@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from src.handlers import (
     giphy_handler,
+    gitscrape_handler,
     imagine_handler,
     roast_handler,
     roast_handler_appCommand,
@@ -24,7 +25,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-LATEST_UPDATE = "updated roast handler prompt + updated ping command"
+LATEST_UPDATE = "add /gitscrape command (MVP)"
 
 
 @bot.event
@@ -64,6 +65,7 @@ async def on_message(message: Message):
 )
 async def ping(interaction: Interaction, verbose: str = "NO"):
     latency = round(bot.latency * 1000)  # latency in milliseconds
+    print(f"Ping by {interaction.user}. Latency: {latency}ms")
     if verbose == "YES":
         await interaction.response.send_message(
             f"Pong! 🏓 ({latency}ms)\n**Latest Update:** {LATEST_UPDATE}"
@@ -150,6 +152,14 @@ async def imagine(interaction: Interaction, prompt: str):
 )
 async def speech(interaction: Interaction, prompt: str, voice: str):
     await speech_handler(interaction=interaction, text=prompt, voice=voice)
+
+
+# =========================
+# === GITSCRAPE COMMAND ===
+# =========================
+@bot.tree.command(name="gitscrape", description="Scrape GitHub repositories")
+async def gitscrape(interaction: Interaction, query: str):
+    await gitscrape_handler(interaction=interaction, query=query)
 
 
 if __name__ == "__main__":
