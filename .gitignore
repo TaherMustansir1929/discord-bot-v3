@@ -11,3 +11,12 @@ wheels/
 
 public/images/
 .env
+
+# Runtime data
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+Plan.md
+.agents/
