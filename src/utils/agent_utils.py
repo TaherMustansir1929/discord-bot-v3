@@ -1,11 +1,14 @@
 import os
 
+from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from pydantic import SecretStr
 
-GEMINI_MODEL_NAME = "gemini-3-flash-preview"
-GROQ_MODEL_NAME = "llama-3.3-70b-versatile"
+load_dotenv()
+
+GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-3.1-flash-lite")
+GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", "llama-3.3-70b-versatile")
 
 _model_groq: ChatGroq | None = None
 _model_google: ChatGoogleGenerativeAI | None = None

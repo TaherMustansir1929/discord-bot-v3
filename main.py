@@ -25,7 +25,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-LATEST_UPDATE = "add /gitscrape command (MVP)"
+LATEST_UPDATE = "update repo ranking logic"
 
 
 @bot.event

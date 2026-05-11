@@ -4,58 +4,90 @@ from datetime import datetime, timezone
 from .Repository import Repository
 
 
-def days_since(date_string: str) -> int:
-    dt = datetime.fromisoformat(date_string.replace("Z", "+00:00"))
-    now = datetime.now(timezone.utc)
-    return (now - dt).days
-
-
-def calculate_repo_rank(repo: Repository) -> float:
+def calculate_repo_rank(
+    repo: Repository,
+) -> float:
     """
-    repo -> Items dataclass
+    Generate a weighted GitHub repository quality score (0-100).
+
+    Weight distribution:
+    - Popularity  -> 40%
+    - Activity    -> 40%
+    - Engagement  -> 15%
+    - Health      -> 5%
     """
 
     stars = repo.stars
-    forks = repo.forks
     watchers = repo.watchers
+    forks = repo.forks
+    updated_at = repo.updated_at
+    has_license = repo.license is not None
+    has_description = repo.description is not None
+    has_issues = repo.has_issues
 
-    # -------------------------
-    # Popularity
-    # -------------------------
-    popularity = 0.7 * math.log1p(stars) + 0.3 * math.log1p(watchers)
-
-    # -------------------------
-    # Engagement
-    # -------------------------
-    engagement = math.log1p(forks) * (1 + (forks / (stars + 1)))
-
-    # -------------------------
-    # Activity
-    # -------------------------
-    inactive_days = days_since(repo.updated_at)
-
-    activity = math.exp(-inactive_days / 365)
-
-    # -------------------------
-    # Health
-    # -------------------------
-    has_license = 1 if repo.license else 0
-    has_description = 1 if repo.description else 0
-    issues_enabled = 1 if repo.has_issues else 0
-    topics_score = min(len(repo.topics) / 10, 1)
-
-    health = (
-        0.4 * has_license
-        + 0.2 * has_description
-        + 0.2 * issues_enabled
-        + 0.2 * topics_score
+    # -----------------------------
+    # 1. Popularity (40%)
+    # watchers + stars
+    # logarithmic scaling prevents giant repos from dominating
+    # -----------------------------
+    popularity_raw = stars + watchers
+    popularity_score = min(
+        math.log1p(popularity_raw) / math.log1p(100_000),
+        1.0,
     )
 
-    # -------------------------
-    # Final Score
-    # -------------------------
+    # -----------------------------
+    # 2. Engagement (15%)
+    # forks
+    # -----------------------------
+    engagement_score = min(
+        math.log1p(forks) / math.log1p(50_000),
+        1.0,
+    )
+
+    # -----------------------------
+    # 3. Activity (40%)
+    # recently updated
+    # decay based on days since last update
+    # -----------------------------
+    updated_dt = datetime.fromisoformat(updated_at.replace("Z", "+00:00"))
+    now = datetime.now(timezone.utc)
+
+    days_since_update = (now - updated_dt).days
+
+    if days_since_update <= 7:
+        activity_score = 1.0
+    elif days_since_update <= 30:
+        activity_score = 0.85
+    elif days_since_update <= 90:
+        activity_score = 0.65
+    elif days_since_update <= 180:
+        activity_score = 0.4
+    elif days_since_update <= 365:
+        activity_score = 0.2
+    else:
+        activity_score = 0.05
+
+    # -----------------------------
+    # 4. Health (5%)
+    # repo hygiene signals
+    # -----------------------------
+    health_checks = [
+        has_license,
+        has_description,
+        has_issues,
+    ]
+
+    health_score = sum(health_checks) / len(health_checks)
+
+    # -----------------------------
+    # Final weighted score
+    # -----------------------------
     final_score = (
-        0.35 * popularity + 0.25 * engagement + 0.25 * activity + 0.15 * health
+        popularity_score * 0.40
+        + activity_score * 0.40
+        + engagement_score * 0.15
+        + health_score * 0.05
     )
 
     return round(final_score * 100, 2)
