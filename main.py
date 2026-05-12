@@ -25,7 +25,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-LATEST_UPDATE = "reapply reranking + increase top_5 to top_10 for more variety"
+LATEST_UPDATE = "github actions - ci/cd"
 
 
 @bot.event
