@@ -10,7 +10,7 @@ load_dotenv()
 
 async def roast_agent(user_prompt: str) -> str:
     agent = create_agent(
-        model=get_google_model(),
+        model=get_google_model("gemini-3-flash-preview"),
         system_prompt=roast_prompt,
     )
     response = await agent.ainvoke({"messages": [HumanMessage(content=user_prompt)]})

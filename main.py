@@ -25,7 +25,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-LATEST_UPDATE = "github actions - ci/cd"
+LATEST_UPDATE = "update gemini model for roast agent"
 
 
 @bot.event
