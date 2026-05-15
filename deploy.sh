@@ -6,10 +6,8 @@ set -euo pipefail
 
 # ── Configuration (edit these) ───────────────────────────────────────────────
 REPO_URL="https://github.com/TaherMustansir1929/discord-bot-v3.git"  # or SSH URL
-REPO_DIR="./discord-bot"          # where the repo lives (or will be cloned)
-IMAGE_NAME="discord-bot-v3"          # Docker image name
-CONTAINER_NAME="discord-bot"         # Docker container name
-ENV_FILE=".env"     # path to your .env file (outside repo)
+REPO_DIR="./app"                     # where the repo lives (or will be cloned)
+ENV_FILE=".env"                      # path to your .env file
 BRANCH="main"                        # branch to pull from
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -72,54 +70,33 @@ fi
 
 success "Source code is up to date."
 
-# ── Build Docker image ────────────────────────────────────────────────────────
-step "Building Docker image '$IMAGE_NAME'"
+# ── Build and Run with Docker Compose ─────────────────────────────────────────
+step "Building and starting services"
 
-$DOCKER build \
-    --tag  "${IMAGE_NAME}:latest" \
-    --tag  "${IMAGE_NAME}:$(git -C "$REPO_DIR" rev-parse --short HEAD)" \
-    --file "$REPO_DIR/Dockerfile" \
-    "$REPO_DIR"
-
-success "Image built: ${IMAGE_NAME}:latest"
-
-# ── Stop & remove old container (if any) ─────────────────────────────────────
-step "Replacing container '$CONTAINER_NAME'"
-
-if $DOCKER ps -q --filter "name=^${CONTAINER_NAME}$" | grep -q .; then
-    log "Stopping running container..."
-    $DOCKER stop "$CONTAINER_NAME"
+# Resolve absolute path for ENV_FILE if it is a relative path
+if [[ "$ENV_FILE" != /* ]]; then
+    ENV_FILE_ABS="$(cd "$(dirname "$ENV_FILE")" && pwd)/$(basename "$ENV_FILE")"
+else
+    ENV_FILE_ABS="$ENV_FILE"
 fi
 
-if $DOCKER ps -aq --filter "name=^${CONTAINER_NAME}$" | grep -q .; then
-    log "Removing old container..."
-    $DOCKER rm "$CONTAINER_NAME"
-fi
+cd "$REPO_DIR"
 
-# ── Run new container ─────────────────────────────────────────────────────────
-step "Starting container"
+$DOCKER compose --env-file "$ENV_FILE_ABS" up --build --detach
 
-$DOCKER run \
-    --detach \
-    --name "$CONTAINER_NAME" \
-    --env-file "$ENV_FILE" \
-    --restart unless-stopped \
-    "${IMAGE_NAME}:latest"
-
-success "Container '${CONTAINER_NAME}' is running in detached mode."
+success "Services are running."
 
 # ── Status summary ────────────────────────────────────────────────────────────
 echo ""
 echo -e "${BOLD}── Deployment Summary ───────────────────────────────────────${RESET}"
-echo -e "  Commit  : $(git -C "$REPO_DIR" log -1 --format='%h — %s (%cr)')"
-echo -e "  Image   : ${IMAGE_NAME}:latest"
-echo -e "  Status  : $($DOCKER inspect -f '{{.State.Status}}' "$CONTAINER_NAME")"
-echo -e "  Started : $($DOCKER inspect -f '{{.State.StartedAt}}' "$CONTAINER_NAME")"
+echo -e "  Commit  : $(git -C "." log -1 --format='%h — %s (%cr)')"
+echo -e "  Status  :"
+$DOCKER compose ps
 echo -e "${BOLD}─────────────────────────────────────────────────────────────${RESET}"
 echo ""
-echo -e "  ${CYAN}Logs:${RESET}     ${DOCKER} logs -f ${CONTAINER_NAME}"
-echo -e "  ${CYAN}Stop:${RESET}     ${DOCKER} stop ${CONTAINER_NAME}"
-echo -e "  ${CYAN}Restart:${RESET}  ${DOCKER} restart ${CONTAINER_NAME}"
+echo -e "  ${CYAN}Logs:${RESET}     ${DOCKER} compose logs -f"
+echo -e "  ${CYAN}Stop:${RESET}     ${DOCKER} compose down"
+echo -e "  ${CYAN}Restart:${RESET}  ${DOCKER} compose restart"
 echo ""
 
 # ── Prune dangling images (optional cleanup) ──────────────────────────────────
