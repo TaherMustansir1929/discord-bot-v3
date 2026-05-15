@@ -70,6 +70,15 @@ fi
 
 success "Source code is up to date."
 
+# ── Self-Update Check ─────────────────────────────────────────────────────────
+if [[ "$REPO_DIR" != "." && -f "$REPO_DIR/deploy.sh" ]]; then
+    if ! cmp -s "$0" "$REPO_DIR/deploy.sh"; then
+        warn "deploy.sh has been updated in the repository. Reloading script..."
+        cp "$REPO_DIR/deploy.sh" "$0"
+        exec bash "$0" "$@"
+    fi
+fi
+
 # ── Build and Run with Docker Compose ─────────────────────────────────────────
 step "Building and starting services"
 
