@@ -81,8 +81,9 @@ else
 fi
 
 cd "$REPO_DIR"
+cp "$ENV_FILE_ABS" ./.env
 
-$DOCKER compose --env-file "$ENV_FILE_ABS" up --build --detach
+$DOCKER compose --env-file .env up --build --detach
 
 success "Services are running."
 
