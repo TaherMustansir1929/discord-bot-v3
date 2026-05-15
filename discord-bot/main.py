@@ -25,7 +25,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-LATEST_UPDATE = "update gemini model for roast agent"
+LATEST_UPDATE = "implement microservices monorepo project structure + gitscrape API"
 
 
 @bot.event

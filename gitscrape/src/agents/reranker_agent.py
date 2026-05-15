@@ -1,7 +1,7 @@
 import cohere
 import yaml
 
-from src.handlers.gitscrape.repo_scraping import Repository
+from src.utils import Repository
 
 COHERE_RERANKER_MODEL_NAME = "rerank-v4.0-pro"
 co = cohere.ClientV2()

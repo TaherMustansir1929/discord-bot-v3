@@ -1,37 +1,55 @@
-from discord import Interaction
+import os
 
-from .agents import query_expansion_agent, reranker_agent
-from .repo_scraping import scrape_repositories
-from .utils import create_repo_embed
+import httpx
+from discord import Interaction
+from dotenv import load_dotenv
+
+from .create_repo_embed import create_repo_embed
+from .Repository import Repository
+
+load_dotenv()
+
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+if not GITHUB_TOKEN:
+    raise ValueError("[Error]: GITHUB_TOKEN environment variable is not set")
 
 
 async def gitscrape_handler(interaction: Interaction, query: str):
     await interaction.response.defer()
 
-    # Expand user query to 5
-    queries = await query_expansion_agent(query)
-    print(f"Expanded queries: {queries}")
+    BASE_URL = os.getenv("GITSCRAPE_URL", "http://localhost:8000")
+    URL = f"{BASE_URL}/scrape/repo"
 
-    # Scrape GitHub repositories + calculate relevance scores
-    repositories = await scrape_repositories(queries=queries)
-    print(f"Total repositories found: {len(repositories)}")
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json",
+    }
 
-    if len(repositories) == 0:
-        await interaction.followup.send(
-            content=f"No repositories found for query: `{query}`"
-        )
-        return
+    body = {"query": query}
 
-    if len(repositories) <= 10:
-        top_reranked_repositories = repositories
-    else:
-        # rerank top repositories using Cohere Reranker
-        top_reranked_repositories = await reranker_agent(
-            query=query, repositories=repositories
+    async with httpx.AsyncClient(headers=headers) as client:
+        response = await client.post(URL, json=body)
+        if response.status_code != 200:
+            error_data = response.json()
+            error_detail = (
+                error_data.get("detail", str(error_data))
+                if isinstance(error_data, dict)
+                else "Unknown API Error"
+            )
+            return await interaction.followup.send(
+                content=f"[Error from API]: {error_detail}"
+            )
+
+        top_reranked_repositories = response.json()
+
+    if not top_reranked_repositories:
+        return await interaction.followup.send(
+            content="[Error]: No repositories found for the given query"
         )
 
     embeds = []
-    for index, repo in enumerate(top_reranked_repositories, start=1):
+    for index, repo_dict in enumerate(top_reranked_repositories, start=1):
+        repo = Repository(**repo_dict)
         embeds.append(create_repo_embed(repo, index))
 
     await interaction.followup.send(

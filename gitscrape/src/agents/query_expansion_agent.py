@@ -3,7 +3,7 @@ from langchain.messages import HumanMessage
 from pydantic import BaseModel, Field
 
 from src.prompts import QUERY_EXPANSION_PROMPT
-from src.utils import get_google_model
+from src.utils import get_groq_model
 
 
 class Queries(BaseModel):
@@ -15,8 +15,8 @@ class Queries(BaseModel):
 async def query_expansion_agent(query: str) -> list[str]:
 
     agent = create_agent(
-        model=get_google_model(),
-        response_format=Queries,  # Auto-selects ProviderStrategy
+        model=get_groq_model(),
+        response_format=Queries,
     )
 
     result = agent.invoke(

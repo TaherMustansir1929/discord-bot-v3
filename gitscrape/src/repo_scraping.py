@@ -1,30 +1,28 @@
 import asyncio
-import os
 
 import httpx
-from dotenv import load_dotenv
 
-from src.utils import fetch_url_httpx
+from src.utils import (
+    Items,
+    License,
+    Main,
+    Owner,
+    Repository,
+    calculate_repo_rank,
+    fetch_url_httpx,
+)
 
-from .utils import Items, License, Main, Owner, Repository, calculate_repo_rank
-
-load_dotenv()
-
-
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-if not GITHUB_TOKEN:
-    raise ValueError("GITHUB_TOKEN environment variable is not set")
-
-HEADERS = {
-    "Authorization": f"Bearer {GITHUB_TOKEN}",
-    "Accept": "application/vnd.github+json",
-}
 
 BASE_URL = "https://api.github.com/search/repositories"
 
 
 # === Main scraping function ===
-async def scrape_repositories(queries: list[str]) -> list[Repository]:
+async def scrape_repositories(queries: list[str], token: str) -> list[Repository]:
+
+    headers = {
+        "Authorization": token,
+        "Accept": "application/vnd.github+json",
+    }
 
     params = [
         {
@@ -33,7 +31,7 @@ async def scrape_repositories(queries: list[str]) -> list[Repository]:
         for query in queries
     ]
 
-    async with httpx.AsyncClient(headers=HEADERS, timeout=20) as client:
+    async with httpx.AsyncClient(headers=headers, timeout=20) as client:
         tasks = [
             fetch_url_httpx(client, BASE_URL, params[i]) for i in range(len(queries))
         ]

@@ -7,14 +7,15 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    # Extend this file by adding more services below
-    # example-api:
-    #   build:
-    #     context: ./example-api
-    #     dockerfile: Dockerfile
-    #   container_name: example-api
-    #   env_file:
-    #     - .env
-    #   ports:
-    #     - "8000:8000"
-    #   restart: unless-stopped
+
+  gitscrape:
+    build:
+      context: ./gitscrape
+      dockerfile: Dockerfile
+    container_name: gitscrape
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    
