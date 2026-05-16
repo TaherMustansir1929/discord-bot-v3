@@ -51,7 +51,7 @@ ENV PATH="/app/.venv/bin:$PATH" \
 EXPOSE 8000
 
 # Command to run the FastAPI application using uvicorn
-CMD ["fastapi", "run", "--port", "8000"]
+CMD ["fastapi", "run", "--host", "0.0.0.0", "--port", "8000"]
 
 # ---- Run in terminal ----
 # docker build -t gitscrape-service .
