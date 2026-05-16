@@ -2,7 +2,7 @@ from discord import Interaction
 from discord.ext.commands import Bot
 from discord.message import Message
 
-from .agent import roast_agent
+from src.handlers.roast.fetch_response import fetch_roast_api
 
 
 async def roast_handler(message: Message, bot: Bot):
@@ -14,22 +14,32 @@ async def roast_handler(message: Message, bot: Bot):
 
     message.content = message.content.replace(bot.user.mention, "").strip()
     try:
-        response = await roast_agent(message.content)
+        response = await fetch_roast_api(message.content)
+        res_msg = response.get("message")
+
+        if res_msg is None:
+            raise RuntimeError("No message in response")
+
+        print(f"Roast response: {res_msg}")
+        await message.reply(res_msg)
+
     except RuntimeError as exc:
         await message.reply(str(exc))
         return
-
-    print(f"Roast response: {response}")
-    await message.reply(response)
 
 
 async def roast_handler_appCommand(interaction: Interaction, message: str):
     await interaction.response.defer()
 
     try:
-        response = await roast_agent(message)
+        response = await fetch_roast_api(message)
+        res_msg = response.get("message")
+
+        if res_msg is None:
+            raise RuntimeError("No message in response")
+
+        print(f"Roast response: {res_msg}")
+        await interaction.followup.send(res_msg)
     except RuntimeError as exc:
         await interaction.followup.send(str(exc))
         return
-
-    await interaction.followup.send(response)

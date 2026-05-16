@@ -5,24 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "cohere>=6.1.0",
     "discord-py>=2.7.1",
     "dotenv>=0.9.9",
-    "groq>=0.37.1",
+    "groq>=1.2.0",
     "httpx>=0.28.1",
-    "ipykernel>=7.2.0",
-    "langchain>=1.2.15",
-    "langchain-google-genai>=4.2.1",
-    "langchain-groq>=1.1.2",
-    "python-dotenv>=1.2.2",
     "requests>=2.33.1",
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.15.12", "ty>=0.0.34"]
-
-[tool.ruff]
-line-length = 88
-
-[tool.ruff.lint]
-select = ["E", "F", "I"]
+dev = ["ty>=0.0.37"]

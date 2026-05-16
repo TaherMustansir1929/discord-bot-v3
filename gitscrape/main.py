@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Header, HTTPException
+import json
+from fastapi import FastAPI, Header, HTTPException, Response
 from pydantic import BaseModel
 
 from src.repo_controller import repo_controller
@@ -34,3 +35,11 @@ async def scrape_repo(
         raise HTTPException(
             detail=f"[Internal Server Error]: {str(e)}", status_code=500
         )
+
+
+@app.get("/")
+async def health_check():
+    response = {"message": "[Success]: Gitscrape server is running"}
+    return Response(
+        content=json.dumps(response), status_code=200, media_type="application/json"
+    )

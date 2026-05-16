@@ -1,16 +1,19 @@
+from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain.messages import AIMessage, HumanMessage
 
 from src.prompts.roast import roast_prompt
-from src.utils import get_google_model
 
 load_dotenv()
 
 
-async def roast_agent(user_prompt: str) -> str:
+async def roast_agent(
+    user_prompt: str, model: ChatGoogleGenerativeAI | ChatGroq
+) -> str:
     agent = create_agent(
-        model=get_google_model("gemini-3-flash-preview"),
+        model=model,
         system_prompt=roast_prompt,
     )
     response = await agent.ainvoke({"messages": [HumanMessage(content=user_prompt)]})

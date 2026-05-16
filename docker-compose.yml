@@ -18,4 +18,15 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+
+  zeos_sarcastic_cat_ai:
+    build:
+      context: ./zeos_sarcastic_cat_ai
+      dockerfile: Dockerfile
+    container_name: zeos_sarcastic_cat_ai
+    env_file:
+      - .env
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
     

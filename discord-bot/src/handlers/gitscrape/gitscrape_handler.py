@@ -27,7 +27,7 @@ async def gitscrape_handler(interaction: Interaction, query: str):
 
     body = {"query": query}
 
-    async with httpx.AsyncClient(headers=headers) as client:
+    async with httpx.AsyncClient(headers=headers, timeout=60.0) as client:
         response = await client.post(URL, json=body)
         if response.status_code != 200:
             error_data = response.json()
