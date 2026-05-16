@@ -2,6 +2,7 @@ from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
 
 from src.repo_controller import repo_controller
+from src.utils import Repository
 
 app = FastAPI()
 
@@ -10,8 +11,11 @@ class RepoScrapeRequest(BaseModel):
     query: str
 
 
-@app.post("/scrape/repo")
-async def scrape_repo(req: RepoScrapeRequest, authorization: str = Header(...)):
+@app.post("/scrape/repo", response_model=list[Repository], status_code=200)
+async def scrape_repo(
+    req: RepoScrapeRequest, authorization: str = Header(...)
+) -> list[Repository]:
+
     if not authorization.startswith("Bearer"):
         raise HTTPException(detail="[Error]: Invalid authorization", status_code=400)
     token = authorization
@@ -30,9 +34,3 @@ async def scrape_repo(req: RepoScrapeRequest, authorization: str = Header(...)):
         raise HTTPException(
             detail=f"[Internal Server Error]: {str(e)}", status_code=500
         )
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run("main:app", port=8000, reload=True)

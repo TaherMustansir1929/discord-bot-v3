@@ -23,12 +23,12 @@ RUN uv sync
 #   - *.pyi        → type stubs, only useful for IDEs/type checkers
 #   - tests/       → test suites shipped inside third-party packages
 RUN find .venv \( \
-        -type d -name "*.dist-info" -o \
-        -type d -name "__pycache__" -o \
-        -type d -name "tests"       -o \
-        -type d -name "test"        \
+    -type d -name "*.dist-info" -o \
+    -type d -name "__pycache__" -o \
+    -type d -name "tests"       -o \
+    -type d -name "test"        \
     \) -exec rm -rf {} + 2>/dev/null || true \
- && find .venv \( -name "*.pyi" -o -name "*.so.debug" \) \
+    && find .venv \( -name "*.pyi" -o -name "*.so.debug" \) \
     -delete 2>/dev/null || true
 
 
@@ -53,7 +53,7 @@ ENV PATH="/app/.venv/bin:$PATH" \
 EXPOSE 8000
 
 # Command to run the FastAPI application using uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["fastapi", "run", "--port", "8000"]
 
 # ---- Run in terminal ----
 # docker build -t gitscrape-service .
