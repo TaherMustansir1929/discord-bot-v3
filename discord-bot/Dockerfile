@@ -18,12 +18,10 @@ COPY . .
 RUN uv sync
 
 # Strip bloat from the venv before copying to the runtime image:
-#   - *.dist-info  → package metadata, not needed at runtime
 #   - __pycache__  → already compiled to .pyc via UV_COMPILE_BYTECODE above
 #   - *.pyi        → type stubs, only useful for IDEs/type checkers
 #   - tests/       → test suites shipped inside third-party packages
 RUN find .venv \( \
-        -type d -name "*.dist-info" -o \
         -type d -name "__pycache__" -o \
         -type d -name "tests"       -o \
         -type d -name "test"        \
