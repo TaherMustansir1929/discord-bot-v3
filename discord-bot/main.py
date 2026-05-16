@@ -25,7 +25,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-LATEST_UPDATE = "expose gitscrape API to the internet"
+LATEST_UPDATE = "separate zeos_sarcastic_cat_ai roast bot to a different microservice"
 
 
 @bot.event
