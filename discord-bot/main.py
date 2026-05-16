@@ -25,7 +25,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-LATEST_UPDATE = "implement microservices monorepo project structure + gitscrape API"
+LATEST_UPDATE = "expose gitscrape API to the internet"
 
 
 @bot.event
