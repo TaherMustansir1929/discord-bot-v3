@@ -8,17 +8,6 @@ services:
       - .env
     restart: unless-stopped
 
-  gitscrape:
-    build:
-      context: ./gitscrape
-      dockerfile: Dockerfile
-    container_name: gitscrape
-    env_file:
-      - .env
-    ports:
-      - "8000:8000"
-    restart: unless-stopped
-
   zeos_sarcastic_cat_ai:
     build:
       context: ./zeos_sarcastic_cat_ai
