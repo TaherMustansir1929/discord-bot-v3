@@ -1,6 +1,6 @@
 import discord
 
-from .Repository import Repository
+from .Types import Repository
 
 
 def create_repo_embed(repo: Repository, index: int):
