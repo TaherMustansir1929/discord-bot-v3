@@ -1,44 +1,29 @@
-import os
-
 from discord import Interaction
-from dotenv import load_dotenv
 
+from src.utils import post_to_server
 from .create_repo_embed import create_repo_embed
-from .repo_scraping import scrape_repositories
-
-load_dotenv()
-
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-if not GITHUB_TOKEN:
-    raise ValueError("[Error]: GITHUB_TOKEN environment variable is not set")
+from .Types import Repository
 
 
 async def gitscrape_handler(interaction: Interaction, query: str):
     await interaction.response.defer()
 
-    headers = {
-        "Authorization": f"Bearer {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github+json",
-    }
+    try:
+        response = await post_to_server("/gitscrape/", {"query": query})
+        data = response.json()
+        repos_data = data.get("repositories", [])
 
-    params = {
-        "q": query,
-        "sort": "stars",
-        "order": "desc",
-        "per_page": 10,
-    }
+        if not repos_data:
+            return await interaction.followup.send(
+                content="[Error]: No repositories found for the given query"
+            )
 
-    top_repositories = await scrape_repositories(query, GITHUB_TOKEN, headers, params)
+        embeds = []
+        for index, repo_dict in enumerate(repos_data, start=1):
+            embeds.append(create_repo_embed(repo_dict, index))
 
-    if not top_repositories:
-        return await interaction.followup.send(
-            content="[Error]: No repositories found for the given query"
+        await interaction.followup.send(
+            content=f"**GitScrape Results for:** `{query}`", embeds=embeds
         )
-
-    embeds = []
-    for index, repo in enumerate(top_repositories, start=1):
-        embeds.append(create_repo_embed(repo, index))
-
-    await interaction.followup.send(
-        content=f"**GitScrape Results for:** `{query}`", embeds=embeds
-    )
+    except Exception as e:
+        await interaction.followup.send(f"Error: {e}")
