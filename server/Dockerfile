@@ -1,5 +1,8 @@
 # ── Stage 1: dependency resolver ─────────────────────────────────────────────
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS builder
+FROM python:3.13-slim-bookworm AS builder
+
+# Install uv to bypass ghcr.io rate limits/auth issues
+RUN pip install uv
 
 WORKDIR /app
 
