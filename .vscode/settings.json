@@ -4,11 +4,6 @@
             "path": "discord-bot",
             "envManager": "ms-python.python:venv",
             "packageManager": "ms-python.python:pip"
-        },
-        {
-            "path": "zeos_sarcastic_cat_ai",
-            "envManager": "ms-python.python:venv",
-            "packageManager": "ms-python.python:pip"
         }
     ]
 }

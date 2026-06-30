@@ -8,11 +8,11 @@ services:
       - .env
     restart: unless-stopped
 
-  zeos_sarcastic_cat_ai:
+  server:
     build:
-      context: ./zeos_sarcastic_cat_ai
+      context: ./server
       dockerfile: Dockerfile
-    container_name: zeos_sarcastic_cat_ai
+    container_name: server
     env_file:
       - .env
     ports:
