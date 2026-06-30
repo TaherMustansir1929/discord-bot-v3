@@ -15,4 +15,5 @@ async def gitscrape_endpoint(req: GitscrapeRequest):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in gitscrape_endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")

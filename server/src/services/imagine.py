@@ -21,8 +21,11 @@ async def generate_image(prompt: str) -> str:
         response.raise_for_status()
         polling_url = response.json()["polling_url"]
 
-        while True:
+        max_attempts = 120 # 60 seconds
+        attempts = 0
+        while attempts < max_attempts:
             await asyncio.sleep(0.5)
+            attempts += 1
             poll_response = await client.get(polling_url, headers={"accept": "application/json", "x-key": bfl_api_key})
             poll_response.raise_for_status()
             
@@ -32,3 +35,5 @@ async def generate_image(prompt: str) -> str:
                 return result["result"]["sample"]
             elif status in ["Error", "Failed"]:
                 raise HTTPException(status_code=500, detail="Error generating image")
+        
+        raise HTTPException(status_code=504, detail="Image generation timed out")

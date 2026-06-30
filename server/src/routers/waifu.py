@@ -16,4 +16,5 @@ async def waifu_endpoint(req: WaifuRequest):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in waifu_endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")

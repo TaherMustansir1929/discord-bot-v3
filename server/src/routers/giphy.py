@@ -16,4 +16,5 @@ async def giphy_endpoint(req: GiphyRequest):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in giphy_endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")

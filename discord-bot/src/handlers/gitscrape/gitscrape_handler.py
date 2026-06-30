@@ -20,8 +20,7 @@ async def gitscrape_handler(interaction: Interaction, query: str):
 
         embeds = []
         for index, repo_dict in enumerate(repos_data, start=1):
-            repo = Repository(**repo_dict)
-            embeds.append(create_repo_embed(repo, index))
+            embeds.append(create_repo_embed(repo_dict, index))
 
         await interaction.followup.send(
             content=f"**GitScrape Results for:** `{query}`", embeds=embeds

@@ -17,4 +17,4 @@ def generate_speech(text: str, voice: str) -> bytes:
         )
         return response.read()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

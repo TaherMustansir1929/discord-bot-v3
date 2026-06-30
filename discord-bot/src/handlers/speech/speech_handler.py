@@ -31,7 +31,7 @@ async def send_audio_to_discord(
     buffer = io.BytesIO(audio_bytes)
     buffer.seek(0)  # rewind so discord.py reads from the beginning
 
-    audio_file = discord.File(fp=buffer, filename="audio.mp3")
+    audio_file = discord.File(fp=buffer, filename="audio.wav")
 
     await interaction.followup.send(
         content=f"**{text}**",

@@ -56,7 +56,7 @@ async def waifu_handler(
                 err_detail = response.json().get("detail", str(e))
                 await interaction.followup.send(str(err_detail))
                 return
-            except Exception:
+            except ValueError:
                 pass
         await interaction.followup.send(f"Error: {str(e)}")
         return

@@ -27,8 +27,8 @@ async def get_random_gif(search: str, rating: str) -> str:
         if not data:
             raise HTTPException(status_code=404, detail="No GIF found.")
             
-        gifs_len = len(data)
-        gif_url = data[random.randint(0, gifs_len - 1)].get("url")
+        gif = random.choice(data)
+        gif_url = gif.get("url")
         if not gif_url:
             raise HTTPException(status_code=404, detail="No GIF found.")
             
